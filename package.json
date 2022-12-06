@@ -11,5 +11,9 @@
   "devDependencies": {
     "typescript": "^4.6.4",
     "vite": "^3.2.3"
+  },
+  "dependencies": {
+    "@types/three": "^0.146.0",
+    "three": "^0.146.0"
   }
 }
