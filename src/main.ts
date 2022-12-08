@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import './style.css';
 import { AnimationMixer, Color, Object3D, TextureLoader, Vector2, Vector3 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { MapControls, OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader';
 
@@ -34,7 +34,7 @@ orbitControls.update();
 //MOVEMENT
 let movements: Vector3[] = [];
 let objects: THREE.Object3D[] = [];
-let dummy: THREE.Object3D;
+let player: THREE.Object3D;
 let rotationSet = false;
 const speed = .04;
 
@@ -53,12 +53,13 @@ function onWindowResize() {
 window.addEventListener('resize', onWindowResize);
 
 //GLB Model
-new GLTFLoader().load('assets/toon_man.glb', function (gltf) {
+new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
   const model = gltf.scene;
   model.castShadow = true;
   model.traverse(c=>{
         c.castShadow = true;
   });
+  model.position.y = .2
   // const dummyposx = Math.random()*16 - 8;
   // const dummyposz = Math.random()*16 - 8;
   // model.position.x = dummyposx;
@@ -78,6 +79,7 @@ new GLTFLoader().load('assets/toon_man.glb', function (gltf) {
   // let anim = animationsMap.get('animation_0');
   // console.log(anim);
   // anim?.play();
+  player = model;
   console.log(model);
   scene.add(model);
 });
@@ -160,7 +162,7 @@ function createObstacles(){
   }
 }
 
-createObstacles();
+// createObstacles();
 
 
 
@@ -182,13 +184,33 @@ createObstacles();
 //   }
 // }
 
+//Controls
+let velocity = 0;
+let acceleration = 0;
 
+document.addEventListener('keydown', (e)=>{
+  if(e.key == "w"){
+    acceleration += .1;
+  } else if(e.key == "s"){
+    acceleration -= .1;
+  } else if(e.key == "a"){
+    player.rotateY(.1);
+  } else if(e.key == "d"){
+    player.rotateY(-.1);
+  }
+})
 
+function move(dt: number){
+  player.translateZ(acceleration * dt);
+}
 
 const clock = new THREE.Clock();
 var render = function () {
+    const dt = clock.getDelta();
     requestAnimationFrame( render );
-  
+    move(dt);
+    orbitControls.target = player.position;
+    orbitControls.update();
     renderer.render(scene, camera);
   
   };
