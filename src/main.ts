@@ -1,10 +1,10 @@
 import './style.css';
 
-import App from './Scene';
-import Car from './Car';
-import AI from './AI';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+import App from './Scene';
 import Player from './Player';
+import AI from './AI';
 
 
 const app = new App();
@@ -24,6 +24,7 @@ window.addEventListener('resize', onWindowResize);
 const botBtn = document.getElementById("btn");
 
 //ADD AI
+const bots: AI[] = [];
 const aiColors = [0x33bbaa, 0x11ffff,  0x00aaff, 0x00ff21]
 let offset = 0;
 botBtn?.addEventListener("click", (e) => {
@@ -51,7 +52,8 @@ botBtn?.addEventListener("click", (e) => {
     model.children[0].children[4].material.color.setHex(color);
     model.children[0].children[5].material.color.setHex(color);
     // console.log(model);
-    const player = new AI(app);
+    const aibot = new AI(model, app);
+    bots.push(aibot);
     app.scene.add(model);
   });
   
@@ -92,9 +94,12 @@ function render(){
   if(app.player){
       app.controls.target = app.player.mesh.position;
       app.controls.update();
+      app.player.move(dt, app.inputVector);
   }
 
-  app.player?.move(dt, app.inputVector);
+  bots.forEach((bot)=>{
+    bot.move(dt, app.inputVector);
+  });
 
 
   app.renderer.render(app.scene, app.camera);

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import Car from "./Car";
+import Player from "./Player";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 
@@ -9,7 +10,7 @@ export default class Scene{
     public renderer: THREE.WebGLRenderer;
     public scene: THREE.Scene;
     public controls: OrbitControls;
-    public player: Car | null;
+    public player: Player | null;
 
     //Controls
     public inputVector: THREE.Vector3;
