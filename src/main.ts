@@ -1,218 +1,103 @@
-import * as THREE from 'three'
 import './style.css';
-import { AnimationMixer, Color, Object3D, TextureLoader, Vector2, Vector3 } from 'three';
-import { MapControls, OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+
+import App from './Scene';
+import Car from './Car';
+import AI from './AI';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader';
+import Player from './Player';
 
-// SCENE
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xADD8E6);
 
-// CAMERA
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.y = 5;
-camera.position.z = 5;
-camera.position.x = 0;
-
-// RENDERER
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.shadowMap.enabled = true
-document.body.appendChild(renderer.domElement);
-
-// CONTROLS
-const orbitControls = new OrbitControls(camera, renderer.domElement);
-orbitControls.enableDamping = true
-orbitControls.minDistance = 5
-orbitControls.maxDistance = 15
-orbitControls.enablePan = false
-orbitControls.maxPolarAngle = Math.PI / 2 - 0.05
-orbitControls.update();
-
-//MOVEMENT
-let movements: Vector3[] = [];
-let objects: THREE.Object3D[] = [];
-let player: THREE.Object3D;
-let rotationSet = false;
-const speed = .04;
-
-//OBSTACLES
-const numObstacles = 30;
-const goalGeo = new THREE.CylinderGeometry( 5, 5, 20, 32 );
-const goalMat = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-const goal = new THREE.Mesh( goalGeo, goalMat );
+const app = new App();
 
 // RESIZE HANDLER
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+export function onWindowResize() {
+  app.camera.aspect = window.innerWidth / window.innerHeight;
+  app.camera.updateProjectionMatrix();
+  app.renderer.setSize(window.innerWidth, window.innerHeight);
+  
+  return;
 }
+
 window.addEventListener('resize', onWindowResize);
 
-//GLB Model
+//Controls
+const botBtn = document.getElementById("btn");
+
+//ADD AI
+const aiColors = [0x33bbaa, 0x11ffff,  0x00aaff, 0x00ff21]
+let offset = 0;
+botBtn?.addEventListener("click", (e) => {
+  new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
+    const model = gltf.scene;
+    model.castShadow = true;
+    model.traverse(c=>{
+        c.castShadow = true;
+    });
+    model.position.y = .2
+    model.position.x = offset;
+    offset += 2;
+    // model.children[0].children[3].material.color.setHex(0xffaabb);
+  
+    //Color controls
+    const color = aiColors[AI.numAI % aiColors.length];
+    console.log('color:', color);
+    model.children[0].children[0].children[0].material.color.setHex(color);
+    model.children[0].children[1].children[0].children[0].material.color.setHex(color);
+    model.children[0].children[1].children[0].children[1].material.color.setHex(color);
+    model.children[0].children[1].children[1].material.color.setHex(color);
+    model.children[0].children[1].children[2].material.color.setHex(color);
+    model.children[0].children[2].material.color.setHex(color);
+    model.children[0].children[3].material.color.setHex(color);
+    model.children[0].children[4].material.color.setHex(color);
+    model.children[0].children[5].material.color.setHex(color);
+    // console.log(model);
+    const player = new AI(app);
+    app.scene.add(model);
+  });
+  
+});
+
+//LOAD Player
 new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
   const model = gltf.scene;
   model.castShadow = true;
   model.traverse(c=>{
-        c.castShadow = true;
+      c.castShadow = true;
   });
   model.position.y = .2
-  // const dummyposx = Math.random()*16 - 8;
-  // const dummyposz = Math.random()*16 - 8;
-  // model.position.x = dummyposx;
-  // model.position.z = dummyposz;
-  // orbitControls.target = model.position;
-  // dummy = model;
-  // orbitControls.target = dummy.position;
-  // orbitControls.update();
-  
-  // const gltfAnimations: THREE.AnimationClip[] = gltf.animations;
-  // mixer = new THREE.AnimationMixer(model);
-  // const animationsMap: Map<string, THREE.AnimationAction> = new Map();
-  // console.log(animationsMap);
-  // gltfAnimations.filter(a => a.name != 'TPose').forEach((a: THREE.AnimationClip) => {
-  //     animationsMap.set(a.name, mixer.clipAction(a))
-  // })
-  // let anim = animationsMap.get('animation_0');
-  // console.log(anim);
-  // anim?.play();
-  player = model;
-  console.log(model);
-  scene.add(model);
+  // model.children[0].children[3].material.color.setHex(0xffaabb);
+
+  //Color controls
+  const baseColor = 0xffffff;
+  model.children[0].children[0].children[0].material.color.setHex(baseColor);
+  model.children[0].children[1].children[0].children[0].material.color.setHex(baseColor);
+  model.children[0].children[1].children[0].children[1].material.color.setHex(baseColor);
+  model.children[0].children[1].children[1].material.color.setHex(baseColor);
+  model.children[0].children[1].children[2].material.color.setHex(baseColor);
+  model.children[0].children[2].material.color.setHex(baseColor);
+  model.children[0].children[3].material.color.setHex(baseColor);
+  model.children[0].children[4].material.color.setHex(baseColor);
+  model.children[0].children[5].material.color.setHex(baseColor);
+  // console.log(model);
+  app.player = new Player(model, app);
+  app.scene.add(model);
 });
 
-function generateFloor() {
-    // TEXTURE
-    const textureLoader = new THREE.TextureLoader();
-    // const floorColor = textureLoader.load('/gridbox.png');
+//RENDER LOOP!
+function render(){
+  const dt = app.clock.getDelta();
+  requestAnimationFrame( render );
 
-    const WIDTH = 80
-    const LENGTH = 80
-
-    const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, 512, 512);
-    const material = new THREE.MeshPhongMaterial({color: 0xff4422});
-    // const material = new THREE.MeshStandardMaterial(
-    //     {
-    //        map: floorColor
-    //     })
-    
-        
-        // wrapAndRepeatTexture(material.map);
-    
-
-    const floor = new THREE.Mesh(geometry, material)
-    floor.receiveShadow = true
-    floor.rotation.x = - Math.PI / 2
-    scene.add(floor)
-}
-
-generateFloor();
-
-function wrapAndRepeatTexture (map: THREE.Texture) {
-  map.wrapS = map.wrapT = THREE.RepeatWrapping
-  map.repeat.x = map.repeat.y = 10
-}
-
-function light() {
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7))
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1)
-    dirLight.position.set(- 60, 100, - 10);
-    dirLight.castShadow = true;
-    dirLight.shadow.camera.top = 50;
-    dirLight.shadow.camera.bottom = - 50;
-    dirLight.shadow.camera.left = - 50;
-    dirLight.shadow.camera.right = 50;
-    dirLight.shadow.camera.near = 0.1;
-    dirLight.shadow.camera.far = 200;
-    dirLight.shadow.mapSize.width = 4096;
-    dirLight.shadow.mapSize.height = 4096;
-    scene.add(dirLight);
-    // scene.add( new THREE.CameraHelper(dirLight.shadow.camera))
-}
-
-light();
-
-// const geometry = new THREE.CylinderGeometry(.4, .4, 1.2, 16);
-// const material = new THREE.MeshPhongMaterial( {color: 0xffffff} );
-// const AAA = new THREE.Mesh(geometry, material);
-// AAA.position.y = .6;
-// scene.add(AAA);
-
-function createObstacles(){
-  for(let i = 0; i < numObstacles; i++){
-    const posx = Math.random()*16 - 8;
-    const posz = Math.random()*16 - 8;
-    const rotation = Math.random() * 360;
-
-    const obj = new THREE.BoxGeometry(1, 1, 1);
-    const objMat = new THREE.MeshStandardMaterial();
-
-    const box = new THREE.Mesh(obj, objMat);
-    box.position.x = posx;
-    box.position.y = Math.random()*.5;
-    box.position.z = posz;
-    box.castShadow = true;
-
-    objects.push(box);
-    scene.add(box)
+  //Update Camera Position to Follow Player
+  if(app.player){
+      app.controls.target = app.player.mesh.position;
+      app.controls.update();
   }
-}
 
-// createObstacles();
-
+  app.player?.move(dt, app.inputVector);
 
 
-// document.addEventListener( 'mousedown', onDocumentMouseDown );
-// function onDocumentMouseDown( event: any ) {   
-  
-//   event.preventDefault();
-//   let mouse3D = new THREE.Vector3( ( event.clientX/ window.innerWidth ) * 2 - 1,   
-//                         -( event.clientY / window.innerHeight ) * 2 + 1,  
-//                           0.5 );     
+  app.renderer.render(app.scene, app.camera);
+};
 
-//   var raycaster =  new THREE.Raycaster();                                        
-//   raycaster.setFromCamera( mouse3D, camera );
-
-//   // Grab all objects that can be intersected.
-//   var intersects = raycaster.intersectObjects( scene.children );
-//   if ( intersects.length > 0 ) {
-//     movements.push(intersects[ 0 ].point);
-//   }
-// }
-
-//Controls
-let velocity = 0;
-let acceleration = 0;
-
-document.addEventListener('keydown', (e)=>{
-  if(e.key == "w"){
-    acceleration += .1;
-  } else if(e.key == "s"){
-    acceleration -= .1;
-  } else if(e.key == "a"){
-    player.rotateY(.1);
-  } else if(e.key == "d"){
-    player.rotateY(-.1);
-  }
-})
-
-function move(dt: number){
-  player.translateZ(acceleration * dt);
-}
-
-const clock = new THREE.Clock();
-var render = function () {
-    const dt = clock.getDelta();
-    requestAnimationFrame( render );
-    move(dt);
-    orbitControls.target = player.position;
-    orbitControls.update();
-    renderer.render(scene, camera);
-  
-  };
-  
 render();
