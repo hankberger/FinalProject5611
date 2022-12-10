@@ -2,12 +2,16 @@ import './style.css';
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import App from './Scene';
+import Scene from './Scene';
 import Player from './Player';
 import AI from './AI';
 
 
-const app = new App();
+const app = new Scene();
+
+//Variables
+const bots: AI[] = [];
+const obstacles: any[] = [];
 
 // RESIZE HANDLER
 export function onWindowResize() {
@@ -24,7 +28,7 @@ window.addEventListener('resize', onWindowResize);
 const botBtn = document.getElementById("btn");
 
 //ADD AI
-const bots: AI[] = [];
+
 const aiColors = [0x33bbaa, 0x11ffff,  0x00aaff, 0x00ff21]
 let offset = 0;
 botBtn?.addEventListener("click", (e) => {
@@ -84,6 +88,15 @@ new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
   app.player = new Player(model, app);
   app.scene.add(model);
 });
+
+//Helper Functions to get Cars / Obstacles.
+export function getBots(){
+  return bots;
+}
+
+export function getObstacles(){
+  return app.getObstacles();
+}
 
 //RENDER LOOP!
 function render(){

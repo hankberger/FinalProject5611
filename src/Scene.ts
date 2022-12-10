@@ -11,6 +11,7 @@ export default class Scene{
     public scene: THREE.Scene;
     public controls: OrbitControls;
     public player: Player | null;
+    public obstacles: THREE.Mesh[];
 
     //Controls
     public inputVector: THREE.Vector3;
@@ -23,6 +24,7 @@ export default class Scene{
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.player = null;
         this.inputVector = new THREE.Vector3();
+        this.obstacles = [];
         
         this.setupScene();
         this.setupCamera();
@@ -119,14 +121,18 @@ export default class Scene{
       
           const box = new THREE.Mesh(obj, objMat);
           box.position.x = posx;
-          box.position.y = Math.random()*.5;
+          box.position.y = .5;
           box.position.z = posz;
           box.castShadow = true;
       
-        //   objects.push(box);
+          this.obstacles.push(box);
           this.scene.add(box)
         }
-      }
+    }
+    
+    getObstacles(){
+        return this.obstacles;
+    }
 
     setupLights() {
         this.scene.add(new THREE.AmbientLight(0xffffff, 0.7))
@@ -145,4 +151,6 @@ export default class Scene{
         this.scene.add(dirLight);
         return;
     }
+
+   
 }

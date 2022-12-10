@@ -1,12 +1,16 @@
 import Car from "./Car";
 import App from "./Scene";
 import { Vector3, Group } from "three";
+import { getBots, getObstacles } from "./main";
 
 export default class AI extends Car{
     public static numAI: number = 0;
     constructor(carMesh: Group, app: App){
         super(carMesh, app);
         AI.numAI += 1;
+
+        this.getObstaclePositions();
+        
     }
 
     //I copied this function from the Player class. Right now it just moves the bot using the same controls as the player.
@@ -40,6 +44,33 @@ export default class AI extends Car{
         this.mesh.translateZ(this.velocity);
         this.position = this.mesh.position;
         // this.mesh.children[0].children[0].children[0].rotateY(.1)
+
         return;
+    }
+
+    //Returns an array of Vec3 positions of all bots except self. 
+    getBotPositions(): Vector3[]{
+        const bots = getBots();
+        const botPositions: Vector3[] = [];
+
+        bots.forEach((bot, i)=>{
+            if(i != this.id - 1){
+                botPositions.push(bot.position);
+            }
+        });
+
+        return botPositions;
+    }
+
+    //Return an array of Vec3 positions of all obstacles.
+    getObstaclePositions(): Vector3[]{
+        const obstacleArr = getObstacles();
+        const obstaclePositions: Vector3[] = [];
+
+        obstacleArr.forEach((obj) => {
+            obstaclePositions.push(obj.position);
+        });
+
+        return obstaclePositions;
     }
 }
