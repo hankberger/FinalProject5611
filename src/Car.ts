@@ -1,13 +1,15 @@
 import { Group, Mesh, Vector3 } from "three";
 import App from "./Scene";
+import * as CANNON from 'cannon-es';
+import CannonDebugRenderer from "./utils/cannonDebugRenderer";
 
 //ABSTRACT CAR CLASS: Should be inherited for different types of players. See AI.ts or Player.ts for example.
 export default class Car{
     public id: number;
     public acceleration: number;
     public velocity: number;
-    public position: Vector3;
     public mesh: Group;
+    public hitbox: CANNON.Body | null;
     public app: App;
 
     public static numCars = 0;
@@ -20,7 +22,12 @@ export default class Car{
         this.velocity = 0;
         
         this.mesh = carMesh;
-        this.position = new Vector3();
+
+        const carBodyShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 1))   
+        const carBody = new CANNON.Body({ mass: 1 })
+        carBody.addShape(carBodyShape)
+        carBody.position.y = 0;
+        this.hitbox = carBody;
 
         this.app = app;
 

@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import Car from "./Car";
 import Player from "./Player";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import * as CANNON from 'cannon-es';
+import CannonDebugRenderer from './utils/cannonDebugRenderer'
 
 
 export default class Scene{
@@ -12,6 +14,11 @@ export default class Scene{
     public controls: OrbitControls;
     public player: Player | null;
     public obstacles: THREE.Mesh[];
+
+    //Physics
+    public world: CANNON.World;
+    public carBox: CANNON.Body | null;
+    public cannonDebug: CannonDebugRenderer;
 
     //Controls
     public inputVector: THREE.Vector3;
@@ -25,6 +32,11 @@ export default class Scene{
         this.player = null;
         this.inputVector = new THREE.Vector3();
         this.obstacles = [];
+        this.world = new CANNON.World();
+        this.world.gravity.set(0,-9.82, 0);
+        this.carBox = null;
+
+        this.cannonDebug = new CannonDebugRenderer(this.scene, this.world)
         
         this.setupScene();
         this.setupCamera();
@@ -32,6 +44,7 @@ export default class Scene{
         this.setupControls();
         this.setupObjects();
         this.setupLights();
+        this.setupPhysics();
 
         document.addEventListener('keydown', (e)=>{
             if(e.key == "w"){
@@ -102,6 +115,9 @@ export default class Scene{
         floor.receiveShadow = true
         floor.rotation.x = - Math.PI / 2
         this.scene.add(floor)
+
+        // const groundShape = new CANNON.Box(new CANNON.Vec3(50, 1, 50))
+        // const groundBody = new CANNON.Body({ mass: 0, material: groundMaterial })
     }
 
     wrapAndRepeatTexture (map: THREE.Texture) {
@@ -152,5 +168,39 @@ export default class Scene{
         return;
     }
 
-   
+   setupPhysics(){
+        const phongMaterial = new THREE.MeshPhongMaterial()
+        const groundMaterial = new CANNON.Material('groundMaterial')
+        groundMaterial.friction = 0.25
+        groundMaterial.restitution = 0.25
+
+        const groundShape = new CANNON.Box(new CANNON.Vec3(50, 1, 50))
+        const groundBody = new CANNON.Body({ mass: 0, material: groundMaterial })
+        groundBody.addShape(groundShape)
+        groundBody.position.set(0, -1, 0)
+        this.world.addBody(groundBody)
+
+        //jumps
+        for (let i = 0; i < 100; i++) {
+            const jump = new THREE.Mesh(
+                new THREE.CylinderGeometry(0, 1, .5, 5),
+                phongMaterial
+            )
+            jump.position.x = Math.random() * 100 - 50
+            jump.position.y = 0;
+            jump.position.z = Math.random() * 100 - 50
+            this.scene.add(jump)
+
+            const cylinderShape = new CANNON.Cylinder(0.01, 1, 0.5, 5)
+            const cylinderBody = new CANNON.Body({ mass: 0 })
+            cylinderBody.addShape(cylinderShape, new CANNON.Vec3())
+            cylinderBody.position.x = jump.position.x
+            cylinderBody.position.y = jump.position.y
+            cylinderBody.position.z = jump.position.z
+            this.world.addBody(cylinderBody)
+
+           
+        }
+
+   }
 }

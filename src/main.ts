@@ -5,6 +5,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import Scene from './Scene';
 import Player from './Player';
 import AI from './AI';
+import { Object3D } from 'three';
+import * as CANNON from 'cannon-es';
 
 
 const app = new Scene();
@@ -28,8 +30,7 @@ window.addEventListener('resize', onWindowResize);
 const botBtn = document.getElementById("btn");
 
 //ADD AI
-
-const aiColors = [0x33bbaa, 0x11ffff,  0x00aaff, 0x00ff21]
+const aiColors = [0x33bbaa, 0x11ffff, 0x00aaff, 0x00ff21]
 let offset = 0;
 botBtn?.addEventListener("click", (e) => {
   new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
@@ -86,6 +87,11 @@ new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
   model.children[0].children[5].material.color.setHex(baseColor);
   // console.log(model);
   app.player = new Player(model, app);
+
+  if(app.player.hitbox){
+    app.world.addBody(app.player.hitbox);
+  }
+  
   app.scene.add(model);
 });
 
@@ -96,6 +102,20 @@ export function getBots(){
 
 export function getObstacles(){
   return app.getObstacles();
+}
+
+//Physics
+function updateCarBox(){
+  if(app.carBox && app.player){
+    app.carBox.position.x = app.player.mesh.position.x;
+    app.carBox.position.y = app.player.mesh.position.y + 1;
+    app.carBox.position.z = app.player.mesh.position.z;
+    app.carBox.quaternion.x = app.player.mesh.quaternion.x;
+    app.carBox.quaternion.y = app.player.mesh.quaternion.y;
+    app.carBox.quaternion.z = app.player.mesh.quaternion.z;
+    console.log(app.player); 
+    console.log(app.carBox)
+  }
 }
 
 //RENDER LOOP!
@@ -114,7 +134,9 @@ function render(){
     bot.move(dt, app.inputVector);
   });
 
+  updateCarBox();
 
+  app.cannonDebug.update();
   app.renderer.render(app.scene, app.camera);
 };
 
