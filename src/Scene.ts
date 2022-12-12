@@ -10,7 +10,7 @@ export default class Scene{
     public renderer: THREE.WebGLRenderer;
     public scene: THREE.Scene;
     public controls: OrbitControls;
-    public player: Player | null;
+    public player: Player;
     public obstacles: THREE.Mesh[];
 
     //Controls
@@ -22,7 +22,7 @@ export default class Scene{
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.scene = new THREE.Scene();
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.player = null;
+        this.player = new Player(new THREE.Group, this);
         this.inputVector = new THREE.Vector3();
         this.obstacles = [];
         
@@ -101,6 +101,7 @@ export default class Scene{
         const floor = new THREE.Mesh(geometry, material)
         floor.receiveShadow = true
         floor.rotation.x = - Math.PI / 2
+        floor.position.y = -.01;
         this.scene.add(floor)
     }
 
@@ -151,6 +152,5 @@ export default class Scene{
         this.scene.add(dirLight);
         return;
     }
-
    
 }

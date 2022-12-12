@@ -5,9 +5,11 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import Scene from './Scene';
 import Player from './Player';
 import AI from './AI';
+import Track from './Track';
 
 
 const app = new Scene();
+const track = new Track(app);
 
 //Variables
 const bots: AI[] = [];
@@ -113,6 +115,8 @@ function render(){
   bots.forEach((bot)=>{
     bot.move(dt, app.inputVector);
   });
+
+  track.updateTrack(app.player);
 
 
   app.renderer.render(app.scene, app.camera);
