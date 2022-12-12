@@ -1,6 +1,7 @@
 import './style.css';
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
 
 import Scene from './Scene';
 import Player from './Player';
@@ -101,6 +102,7 @@ export function getObstacles(){
 }
 
 //RENDER LOOP!
+const v = new THREE.Vector3()
 function render(){
   const dt = app.clock.getDelta();
   requestAnimationFrame( render );
@@ -117,6 +119,25 @@ function render(){
   });
 
   track.updateTrack(app.player);
+
+  // app.camera.position.x = app.player.mesh.position.x;
+  // app.camera.position.y = app.player.mesh.position.y+2;
+  // app.camera.position.z = app.player.mesh.position.z;
+  // app.camera.translateZ(-10); 
+
+  // app.camera.updateMatrix()
+
+  app.camera.lookAt(app.player.mesh.position)
+
+    app.cameraPivot.getWorldPosition(v)
+    if (v.y < 2) {
+        v.y = 2
+    }
+
+    const camPosition = new THREE.Vector3(app.player.mesh.position.x, 3, app.player.mesh.position.z)
+    app.camera.position.lerpVectors(app.camera.position, camPosition, 0.035)
+ 
+
 
 
   app.renderer.render(app.scene, app.camera);

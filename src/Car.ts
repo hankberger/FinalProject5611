@@ -9,6 +9,7 @@ export default class Car{
     public position: Vector3;
     public mesh: Group;
     public app: App;
+    public maxSpeed: number;
 
     public static numCars = 0;
 
@@ -24,7 +25,7 @@ export default class Car{
 
         this.app = app;
 
-
+        this.maxSpeed = .25;
     }
 
     //Virtual Function, Implement this in the base class (AI, Player). 

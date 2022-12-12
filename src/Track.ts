@@ -14,7 +14,10 @@ export default class Track{
         this.currentTrack = new trackPiece('start', new THREE.Mesh());
         this.currentRotation = 0;
         this.coordinates = new THREE.Vector3();
-        this.generateTrack();
+        for(let i = 0; i < 20; i++){
+            this.generateTrack();
+        }
+        
     }
 
     generateTrack() {

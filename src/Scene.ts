@@ -7,6 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 export default class Scene{
     public clock: THREE.Clock;
     public camera: THREE.PerspectiveCamera;
+    public cameraPivot: THREE.Object3D;
     public renderer: THREE.WebGLRenderer;
     public scene: THREE.Scene;
     public controls: OrbitControls;
@@ -18,6 +19,7 @@ export default class Scene{
 
     constructor(){
         this.clock = new THREE.Clock();
+        this.cameraPivot = new THREE.Object3D();
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.scene = new THREE.Scene();
@@ -29,7 +31,7 @@ export default class Scene{
         this.setupScene();
         this.setupCamera();
         this.setupRenderer();
-        this.setupControls();
+        // this.setupControls();
         this.setupObjects();
         this.setupLights();
 
@@ -66,6 +68,15 @@ export default class Scene{
         this.camera.position.y = 5;
         this.camera.position.z = 5;
         this.camera.position.x = 0;
+
+        const chaseCam = new THREE.Object3D()
+        chaseCam.position.set(0, 0, 0)
+        const chaseCamPivot = new THREE.Object3D()
+        chaseCamPivot.position.set(0, 2, 4)
+        chaseCam.add(chaseCamPivot)
+        this.scene.add(this.camera);
+
+        this.player.mesh.add(chaseCam);
     }
 
     setupRenderer(){
@@ -79,7 +90,7 @@ export default class Scene{
         // CONTROLS
         this.controls.enableDamping = true;
         this.controls.minDistance = 2;
-        this.controls.maxDistance = 500;
+        this.controls.maxDistance = 5;
         this.controls.enablePan = false
         this.controls.maxPolarAngle = Math.PI / 2 - 0.05
         this.controls.update();

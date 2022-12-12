@@ -17,8 +17,8 @@ export default class AI extends Car{
     move(dt: number, movementVec: Vector3): void { 
         if(movementVec.z != 0){ //Forward / Backward Movement
             this.velocity += this.acceleration * dt * movementVec.z;
-            this.velocity = Math.max(-.5, this.velocity);
-            this.velocity = Math.min(.5, this.velocity);
+            this.velocity = Math.max(-this.maxSpeed, this.velocity);
+            this.velocity = Math.min(this.maxSpeed, this.velocity);
             
         } else { //Slowing down due to friction
             if(this.velocity < -0.01){
