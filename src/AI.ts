@@ -26,6 +26,8 @@ export default class AI extends Car{
                 
             } else if(this.velocity > 0.01){
                 this.velocity -= .01;
+            } else if(this.velocity >= -.01 && this.velocity <= 0.01){
+                this.velocity = 0;
             }
         }
 
