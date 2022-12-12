@@ -39,9 +39,7 @@ export default class Track{
             dir = "right";
         }
         
-
-    
-        const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, 512, 512);
+        const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, 1, 1);
         const material = new THREE.MeshPhongMaterial({map: texture});
     
         const floor = new THREE.Mesh(geometry, material)
