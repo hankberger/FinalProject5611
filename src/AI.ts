@@ -5,49 +5,41 @@ import { getBots, getObstacles } from "./main";
 
 export default class AI extends Car{
     public static numAI: number = 0;
+    public static AIs: AI[] = [];
+    public velocity_vec: Vector3;
+    public last_ang: number = 0;
+    public acc: Vector3;
+
     constructor(carMesh: Group, app: App){
         super(carMesh, app);
         AI.numAI += 1;
 
         this.getObstaclePositions();
-        
+        this.velocity_vec = new Vector3((Math.random() - 0.5) * 3, (Math.random() - 0.5) * 3, 0);
+        this.last_ang = 0;
+        AI.AIs.push(this);
     }
 
     //I copied this function from the Player class. Right now it just moves the bot using the same controls as the player.
     move(dt: number, movementVec: Vector3): void { 
-        if(movementVec.z != 0){ //Forward / Backward Movement
-            this.velocity += this.acceleration * dt * movementVec.z;
-            this.velocity = Math.max(-this.maxSpeed, this.velocity);
-            this.velocity = Math.min(this.maxSpeed, this.velocity);
-            
-        } else { //Slowing down due to friction
-            if(this.velocity < -0.01){
-                this.velocity += .01;
-                
-            } else if(this.velocity > 0.01){
-                this.velocity -= .01;
-            } else if(this.velocity >= -.01 && this.velocity <= 0.01){
-                this.velocity = 0;
-            }
-        }
-
-        if(movementVec.x === 1){ //Turn Right?
-            this.mesh.rotateY(10 * this.velocity * dt);
-        }
-
-        if(movementVec.x === -1){ //Turn Left? 
-            this.mesh.rotateY(-10 * this.velocity * dt);
-        }
-
-        if(movementVec.x === 0){ //Not Turning
-            // this.mesh.children[0].children[1].children[0].children[2].rotation.z = 0;
-        }
-
-        this.mesh.translateZ(this.velocity);
+        const ang = Math.atan2(this.velocity_vec.y, this.velocity_vec.x);
+        this.mesh.rotateY(ang - this.last_ang);
+        this.last_ang = ang;
+        this.mesh.translateZ(this.velocity_vec.length() / 10);
         this.position = this.mesh.position;
-        // this.mesh.children[0].children[0].children[0].rotateY(.1)
+    }
 
-        return;
+    applyAcc(): void {
+        this.velocity_vec.add(this.acc);
+        this.velocity_vec.setLength(10);
+
+        // boundary condition
+        if (this.position.x > 100 || this.position.x < -100) {
+            this.velocity_vec.y = -this.velocity_vec.y;
+        }
+        if (this.position.z > 100 || this.position.z < -100) {
+            this.velocity_vec.x = -this.velocity_vec.x;
+        }
     }
 
     //Returns an array of Vec3 positions of all bots except self. 
