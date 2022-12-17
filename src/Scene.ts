@@ -103,8 +103,8 @@ export default class Scene{
     }
 
     generateFloor() {
-        const WIDTH = 200
-        const LENGTH = 200
+        const WIDTH = 10000
+        const LENGTH = 10000
     
         const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, 1, 1);
         const material = new THREE.MeshPhongMaterial({color: 0x224422});
