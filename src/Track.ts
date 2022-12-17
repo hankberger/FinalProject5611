@@ -2,27 +2,33 @@ import Scene from "./Scene";
 import * as THREE from 'three';
 import Player from "./Player";
 import { Mesh } from "three";
+import AI from "./AI";
 
 export default class Track{
     public app: Scene;
     public currentTrack: trackPiece;
     public currentRotation: number;
     public coordinates: THREE.Vector3;
+    public trackSize: number;
+
+    public static trackList: trackPiece[];
 
     constructor(app: Scene){
         this.app = app;
         this.currentTrack = new trackPiece('start', new THREE.Mesh());
         this.currentRotation = 0;
         this.coordinates = new THREE.Vector3();
-        for(let i = 0; i < 20; i++){
+        this.trackSize = 20;
+        Track.trackList = [];
+        for(let i = 0; i < 4; i++){
             this.generateTrack();
         }
         
     }
 
     generateTrack() {
-        const WIDTH = 10
-        const LENGTH = 10
+        const WIDTH = this.trackSize;
+        const LENGTH = this.trackSize;
 
         const randomNum = ~~(Math.random()* 10);
     
@@ -44,12 +50,13 @@ export default class Track{
     
         const floor = new THREE.Mesh(geometry, material)
         floor.position.x = this.coordinates.x;
-        floor.position.z = this.coordinates.z
+        floor.position.y = .075;
+        floor.position.z = this.coordinates.z;
         this.coordinates = floor.position;
         floor.receiveShadow = true
         floor.rotation.x = - Math.PI / 2
         floor.rotation.z = Math.PI + this.currentRotation;
-        floor.translateY(10);
+        floor.translateY(this.trackSize);
 
         this.currentTrack = new trackPiece(dir, floor);
         // this.currentTrack.mesh.position.x = this.coordinates.x;
@@ -67,6 +74,22 @@ export default class Track{
         }
 
         this.currentRotation = this.currentRotation;
+        Track.trackList.push(this.currentTrack);
+
+        if(Track.trackList.length == 5){
+            this.app.scene.remove(Track.trackList[0].mesh);
+            Track.trackList.shift();
+        }
+        
+    }
+
+    getTrackPositions(){
+        const pos = [];
+        for(let i in Track.trackList){
+            pos.push(Track.trackList[i].mesh.position);
+        }
+
+        return pos;
     }
 
 
@@ -74,8 +97,18 @@ export default class Track{
         const dist = new THREE.Vector3();
         dist.copy(this.currentTrack.mesh.position);
         dist.sub(car.mesh.position);
-        if(dist.length() < 7){
+        if(dist.length() < this.trackSize - 3){
             this.generateTrack();
+        }
+
+        for(let i in AI.AIs){
+            const botDist = new THREE.Vector3();
+            botDist.copy(this.currentTrack.mesh.position);
+            botDist.sub(AI.AIs[i].mesh.position);
+
+            if(botDist.length() < this.trackSize - 3){
+                this.generateTrack();
+            }
         }
     //     if(this.currentTrack.type == "straight"){
     //         if(car.mesh.position.z > this.currentTrack.position.z - 2){

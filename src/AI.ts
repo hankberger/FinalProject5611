@@ -2,6 +2,8 @@ import Car from "./Car";
 import App from "./Scene";
 import { Vector3, Group } from "three";
 import { getBots, getObstacles } from "./main";
+import Track from "./Track";
+import Player from "./Player";
 
 export default class AI extends Car{
     public static numAI: number = 0;
@@ -9,8 +11,12 @@ export default class AI extends Car{
     public velocity_vec: Vector3;
     public last_ang: number = 0;
     public acc: Vector3;
+    public movementArr: Vector3[];
+    public speed: number;
+    public track: Track;
+    public player: Player;
 
-    constructor(carMesh: Group, app: App){
+    constructor(carMesh: Group, app: App, track: Track, player: Player){
         super(carMesh, app);
         AI.numAI += 1;
 
@@ -18,6 +24,10 @@ export default class AI extends Car{
         this.velocity_vec = new Vector3((Math.random() - 0.5) * 3, (Math.random() - 0.5) * 3, 0);
         this.last_ang = 0;
         AI.AIs.push(this);
+        this.track = track;
+        this.movementArr = track.getTrackPositions();
+        this.speed = .45;
+        this.player = player;
     }
 
     //I copied this function from the Player class. Right now it just moves the bot using the same controls as the player.
@@ -27,6 +37,50 @@ export default class AI extends Car{
         this.last_ang = ang;
         this.mesh.translateZ(this.velocity_vec.length() / 10);
         this.position = this.mesh.position;
+    }
+
+    moveToTrack(dt: number){
+        const newTrack = this.track.getTrackPositions();
+        console.log(this.movementArr !== newTrack)
+        if(this.movementArr.length != newTrack.length){
+            this.movementArr.push(newTrack[newTrack.length - 1]);
+        }
+
+        if(this.movementArr.length == 0){
+            return;
+        }
+
+        // this.speed = .1 + (this.player.velocity * Math.random()) ;
+        let curPos = this.mesh.position;
+        let goalPos = this.movementArr[0];
+
+        let dir = new Vector3();
+        dir.subVectors(goalPos, curPos);
+
+         let goalRotation = Math.atan2(dir.x, dir.z);
+        if(Math.abs((this.mesh.rotation.y) - goalRotation) < .15){
+            //Do nothing
+        } else if(this.mesh.rotation.y < (this.mesh.rotation.y + goalRotation) / 2){
+            this.mesh.rotation.y += .1;
+        } else {
+            this.mesh.rotation.y -= .1;
+        }
+
+        if(dir.length() < .25){
+            this.movementArr.shift();
+            return;
+        }
+
+        if(!((this.speed * dt) > dir.length())){
+            dir.normalize();
+        } else {
+            this.mesh.position.x = this.movementArr[0].x;
+            this.mesh.position.z = this.movementArr[0].z;
+        }
+
+        const vel = dir.multiplyScalar(this.speed);
+        this.mesh.position.add(new Vector3(vel.x, 0, vel.z));
+        return;
     }
 
     applyAcc(): void {
