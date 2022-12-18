@@ -11,6 +11,8 @@ import { Vector3, Group } from "three";
 
 
 const app = new Scene();
+app.camera.position.set(0, 3, 0);
+
 const track = new Track(app);
 
 //Variables
@@ -53,13 +55,16 @@ new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
   model.children[0].children[5].material.color.setHex(baseColor);
   // console.log(model);
   app.player = new Player(model, app);
+
+  model.position.set(0, 0.3, 10);
+
   app.scene.add(model);
 });
 
 //ADD AI
 
 const aiColors = [0x33bbaa, 0x11ffff,  0x00aaff, 0x00ff21]
-let offset = 0;
+let offset = 4;
 botBtn?.addEventListener("click", (e) => {
   new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
     const model = gltf.scene;
@@ -68,10 +73,10 @@ botBtn?.addEventListener("click", (e) => {
         c.castShadow = true;
     });
     model.position.y = .2
-    // model.position.x = offset;
-    // offset += 2;
-    model.position.z = Math.random() * 100 - 50;
-    model.position.x = Math.random() * 100 - 50;
+    model.position.x = offset;
+    offset += 2;
+    // model.position.z = Math.random() * 100 - 50;
+    // model.position.x = Math.random() * 100 - 50;
     // model.children[0].children[3].material.color.setHex(0xffaabb);
   
     //Color controls
