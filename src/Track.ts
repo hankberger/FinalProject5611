@@ -1,8 +1,9 @@
 import Scene from "./Scene";
 import * as THREE from 'three';
 import Player from "./Player";
-import { Mesh } from "three";
+import { Loader, Mesh, Object3D } from "three";
 import AI from "./AI";
+import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader';
 
 export default class Track{
     public app: Scene;
@@ -10,6 +11,8 @@ export default class Track{
     public currentRotation: number;
     public coordinates: THREE.Vector3;
     public trackSize: number;
+    public cone: Object3D;
+    public loader: FBXLoader;
 
     public static trackList: trackPiece[];
 
@@ -19,10 +22,14 @@ export default class Track{
         this.currentRotation = 0;
         this.coordinates = new THREE.Vector3();
         this.trackSize = 20;
+        this.cone = new Object3D();
         Track.trackList = [];
         for(let i = 0; i < 4; i++){
             this.generateTrack();
         }
+
+      
+        // this.app.scene.add(this.cone);
         
     }
 
@@ -77,9 +84,28 @@ export default class Track{
         Track.trackList.push(this.currentTrack);
 
         if(Track.trackList.length == 5){
+            if(Track.trackList[0].obstacle){
+                this.app.scene.remove(Track.trackList[0].obstacle);
+            }
+            
             this.app.scene.remove(Track.trackList[0].mesh);
+            
             Track.trackList.shift();
         }
+
+        //Generate a cone
+        this.loader = new FBXLoader();
+        this.loader.load('assets/cone2.fbx', (obj) => {
+            obj.traverse(function(child){
+                child.castShadow = true;
+            })
+            obj.position.x = this.currentTrack.mesh.position.x + (Math.random() * 15) - 7;
+            obj.position.z = this.currentTrack.mesh.position.z + (Math.random() * 15) - 7;
+            obj.position.y = .1;
+            this.app.scene.add(obj);
+            this.app.obstacles.push(obj);
+            this.currentTrack.obstacle = obj;
+        })
         
     }
 
@@ -139,8 +165,11 @@ export default class Track{
 class trackPiece{
     public type: string;
     public mesh: THREE.Mesh;
+    public obstacle: THREE.Group | null;
     constructor(type: string, floor: THREE.Mesh){
         this.type = type;
         this.mesh = floor;
+        this.obstacle = null;
+        // this.obstacle = new THREE.Group();
     }
 }

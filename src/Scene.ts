@@ -12,7 +12,7 @@ export default class Scene{
     public scene: THREE.Scene;
     public controls: OrbitControls;
     public player: Player;
-    public obstacles: THREE.Mesh[];
+    public obstacles: THREE.Group[];
 
     //Controls
     public inputVector: THREE.Vector3;
@@ -98,7 +98,7 @@ export default class Scene{
 
     setupObjects(){
         this.generateFloor();
-        this.createObstacles();
+        // this.createObstacles(); 
         return;
     }
 

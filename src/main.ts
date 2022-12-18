@@ -122,14 +122,14 @@ function render(){
     const dist = new THREE.Vector3();
     dist.copy(app.obstacles[i].position);
     dist.sub(app.player.position);
-    if (dist.length() < 1.5) {
+    if (dist.length() < 1.25) {
         app.player.speed = app.player.speed > 0 ? -4 : 4;
     }
 
     for(let j in AI.AIs){
       dist.copy(app.obstacles[i].position);
       dist.sub(AI.AIs[j].mesh.position);
-      if(dist.length() < 1.5){
+      if(dist.length() < 1.25){
         AI.AIs[j].speed *= -.8
     }
     }

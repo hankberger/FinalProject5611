@@ -61,10 +61,10 @@ export default class Player extends Car {
         }
 
         if (movementVec.z === 1) {
-            this.speed = Math.min(this.maxSpeed, this.speed + dt * this.acceleration);
+            this.speed = Math.min(this.maxSpeed, this.speed + dt * this.acceleration * .6);
         }
         else if (movementVec.z === -1) {
-            this.speed = Math.max(-this.maxSpeed, this.speed - dt * this.acceleration);
+            this.speed = Math.max(-this.maxSpeed, this.speed - dt * this.acceleration * .6);
         }
         else {
             this.speed = Math.max(0, this.speed * 0.9);
