@@ -111,19 +111,17 @@ function render(){
   const dt = app.clock.getDelta();
   requestAnimationFrame( render );
 
-  //Collision
-  
+  // Handle car-obstacle collision
 
-  for(let i in app.obstacles){
+  for (let i in app.obstacles) {
     const dist = new THREE.Vector3();
     dist.copy(app.obstacles[i].position);
     dist.sub(app.player.position);
-    if(dist.length() < 1.5){
+    if (dist.length() < 1.5) {
         // const newPos = new THREE.Vector3();
         // newPos.subVectors(app.player.position, dist)
-        // app.player.position.x = newPos.x;
-        // app.player.position.z = newPos.z;
-        app.player.velocity = -app.player.velocity *.8;
+        console.log("bruh");
+        app.player.speed = -2;
     }
 
     for(let j in AI.AIs){
@@ -230,7 +228,7 @@ function render(){
 
   const camPosition = new THREE.Vector3(app.player.mesh.position.x , 3, app.player.mesh.position.z );
 
-  if(app.player.velocity > .25){
+  if(app.player.velocity_vec.length() > .25){
     app.camera.position.lerpVectors(app.camera.position, camPosition, 0.035)
   }
   
