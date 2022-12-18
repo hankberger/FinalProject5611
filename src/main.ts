@@ -118,10 +118,7 @@ function render(){
     dist.copy(app.obstacles[i].position);
     dist.sub(app.player.position);
     if (dist.length() < 1.5) {
-        // const newPos = new THREE.Vector3();
-        // newPos.subVectors(app.player.position, dist)
-        console.log("bruh");
-        app.player.speed = -2;
+        app.player.speed = app.player.speed > 0 ? -4 : 4;
     }
 
     for(let j in AI.AIs){
