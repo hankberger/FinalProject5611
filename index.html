@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/FinalProject5611/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://use.typekit.net/mhj1qor.css">
+    <title>Vite + TS</title>
+    <script type="module" crossorigin src="/FinalProject5611/assets/index.e00516db.js"></script>
+    <link rel="stylesheet" href="/FinalProject5611/assets/index.d5c1a8ce.css">
+  </head>
+  <body>
+    <div class = 'score'>Score: <span id = 'scorenumber'></span></div>
+    <div class = 'startGame visible' id = 'startGame'>
+      <h1 id = 'title'>Random Racer</h1>
+      <p id = 'instructions'>
+        <strong id = 'strong'>Instructions:</strong> Use your WASD keys to control your car. Collect coins to increase your score. Follow the randomly generated road and try to avoid crashing into obstacles!
+      </p>
+      <button id = 'start'>
+        Start Game
+      </button>
+    </div>
+    <div class = 'UI'>
+      <div id = "devControls">
+        <h2>Controls</h2>
+        <button id = 'btn'>
+          Add a Bot
+        </button>
+      </div>
+    </div>
+    <div class="gameOver hiddenNoTransition" id="gameOver">
+      <h1>GAME OVER</h1>
+      <h2>Your Score: <span id="gameOverScore"></span></h2>
+      <button id = 'playAgain'>
+        Play Again
+      </button>
+    </div>
+    
+  </body>
+</html>
