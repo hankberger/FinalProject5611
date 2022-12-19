@@ -8,9 +8,11 @@ import Player from './Player';
 import AI from './AI';
 import Track from './Track';
 import { Vector3, Group } from "three";
+import UI from './UI';
 
 
 const app = new Scene();
+const ui = new UI();
 app.camera.position.set(0, 3, 0);
 
 const track = new Track(app);
@@ -174,6 +176,8 @@ function render(){
   if(app.player.velocity_vec.length() > .25){
     app.camera.position.lerpVectors(app.camera.position, camPosition, 0.035)
   }
+
+  ui.updateScore(dt, app.player);
   
   app.renderer.render(app.scene, app.camera);
 };
