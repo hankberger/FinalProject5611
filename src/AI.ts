@@ -86,9 +86,9 @@ export default class AI extends Car{
         const pos2 = this.xz_to_xy(player.position);
 
         const t = this.ttc(pos1, this.velocity_vec, pos2, player.velocity_vec);
-        console.log(t);
+        // console.log(t);
 
-        if (t > 0) {
+        if (false) {
             //A_future = A_current + A_vel*ttc; B_future + B_current + B_vel*ttc;
             const a_dist = new Vector3();
             a_dist.copy(this.velocity_vec);
@@ -107,7 +107,7 @@ export default class AI extends Car{
 
             const rel = new Vector3();
             rel.subVectors(af, bf);
-            const k_avoid = 100;
+            const k_avoid = 200;
             rel.setLength(k_avoid * (1 / t));
 
             acc.add(rel);
@@ -125,7 +125,7 @@ export default class AI extends Car{
         const rel_vel = new Vector3()
         rel_vel.subVectors(vel2, vel1);
 
-        const time = this.rayCircleIntersectTime(pos1, 5, pos2, rel_vel);
+        const time = this.rayCircleIntersectTime(pos1, 10, pos2, rel_vel);
 
         return time;
     }
