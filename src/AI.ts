@@ -85,7 +85,7 @@ export default class AI extends Car{
         const pos1 = this.xz_to_xy(this.position);
         const pos2 = this.xz_to_xy(player.position);
 
-        const t = this.ttc(pos1, this.velocity_vec, pos2, player.velocity_vec);
+        // const t = this.ttc(pos1, this.velocity_vec, pos2, player.velocity_vec);
         // console.log(t);
 
         if (false) {
@@ -112,6 +112,54 @@ export default class AI extends Car{
 
             acc.add(rel);
         }
+
+        const sepForce_maxD = 20;
+        const attraction_maxD = 20;
+        const alignment_maxD = 20;
+        const sepScale = 5;
+        const attractionScale = 5;
+        const alignScale = 5;
+
+        // separation
+        for (const other of AI.AIs) {
+            const dist = this.position.distanceTo(other.position);
+            if (dist < 0.01 || dist > sepForce_maxD) continue;
+            console.log("ai separation force")
+            const sepForce = new Vector3();
+            sepForce.subVectors(this.position, other.position);
+            sepForce.setLength(sepScale / Math.pow(dist, 2));
+            acc.add(sepForce);
+        }
+
+        // cohesion
+        // let num_neigh = 0
+        // const avg_pos = new Vector3();
+        // for (const other of AI.AIs) {
+        //     const dist = this.position.distanceTo(other.position);
+        //     if (dist > attraction_maxD) continue;
+        //     avg_pos.add(other.position);
+        //     num_neigh++;
+        // }
+        // avg_pos.divideScalar(num_neigh);
+        // const attractionForce = new Vector3();
+        // attractionForce.subVectors(avg_pos, this.position);
+        // attractionForce.setLength(attractionScale);
+        // acc.add(attractionForce);
+
+        // // alignment
+        // num_neigh = 0;
+        // const avg_vel = new Vector3();
+        // for (const other of AI.AIs) {
+        //     const dist = this.position.distanceTo(other.position);
+        //     if (dist > alignment_maxD) continue;
+        //     avg_vel.add(other.velocity_vec);
+        //     num_neigh++;
+        // }
+        // avg_vel.divideScalar(num_neigh);
+        // const towards = new Vector3();
+        // towards.subVectors(avg_vel, this.velocity_vec);
+        // towards.setLength(alignScale)
+        // acc.add(towards);
 
         this.acc = acc;
     }
