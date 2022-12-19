@@ -16,7 +16,7 @@ export default class Player extends Car {
         // ---------------------------------------------------------------------
 
         // adjust direction vector
-        const ANGLE = 0.1;
+        const ANGLE = 0.05;
         const up = new Vector3(0, 0, 1);
 
         if(movementVec.x === 1) { // Turn Right

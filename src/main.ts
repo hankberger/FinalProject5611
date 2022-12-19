@@ -64,10 +64,15 @@ new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
 });
 
 //ADD AI
-
 const aiColors = [0x33bbaa, 0x11ffff,  0x00aaff, 0x00ff21]
 let offset = 4;
-botBtn?.addEventListener("click", (e) => {
+function addBot(){
+  if(!UI.gameStarted || UI.score < 50){
+    setTimeout(addBot, 1000);
+    return;
+  }
+
+  console.log('add');
   new GLTFLoader().load('assets/lowpoly.gltf', function (gltf) {
     const model = gltf.scene;
     model.castShadow = true;
@@ -112,6 +117,20 @@ botBtn?.addEventListener("click", (e) => {
     bots.push(aibot);
     app.scene.add(model);
   });
+
+  if(AI.AIs.length > 8){
+    app.scene.remove(AI.AIs[0].mesh);
+    AI.AIs.shift();
+  }
+
+  setTimeout(addBot, 1000);
+}
+
+addBot();
+
+
+botBtn?.addEventListener("click", (e) => {
+  
   
 });
 

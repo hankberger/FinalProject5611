@@ -30,7 +30,7 @@ export default class UI{
             panel?.classList.remove('visible');
             panel?.classList.add('hidden');
             UI.gameStarted = true;
-            console.log('yeet');
+            // console.log('yeet');
         })
     }
 

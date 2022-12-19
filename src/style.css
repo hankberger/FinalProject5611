@@ -20,7 +20,7 @@ html, body{
 }
 
 .UI{
-  /* visibility: hidden; */
+  visibility: hidden;
   position: absolute;
   right: 5px;
   top: 5px;

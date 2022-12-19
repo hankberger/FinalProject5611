@@ -30,7 +30,7 @@ export default class Car{
 
         this.app = app;
 
-        this.maxSpeed = 2;
+        this.maxSpeed = 3.5;
     }
 
     //Virtual Function, Implement this in the base class (AI, Player). 
