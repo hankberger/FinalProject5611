@@ -13,6 +13,8 @@ export default class AI extends Car{
     public speed: number;
     public track: Track;
     public player: Player;
+    public offset_x: number;
+    public offset_z: number;
 
     constructor(carMesh: Group, app: App, track: Track, player: Player){
         super(carMesh, app);
@@ -26,6 +28,8 @@ export default class AI extends Car{
         this.movementArr = track.getTrackPositions();
         this.speed = .45;
         this.player = player;
+        this.offset_x = Math.random() * 10 - 5;
+        this.offset_z = Math.random() * 10 - 5;
     }
 
     //I copied this function from the Player class. Right now it just moves the bot using the same controls as the player.
@@ -51,19 +55,25 @@ export default class AI extends Car{
 
         // set new velocity to make car move towards goal
         const curPos = this.mesh.position;
-        const goalPos = this.movementArr[0];
+        const goalPos = new Vector3();
+        goalPos.copy(this.movementArr[0]);
+        
+        // add a little noise to the goal position
+        goalPos.x += this.offset_x;
+        goalPos.z += this.offset_z;
+
         const new_vel = new Vector3();
         new_vel.subVectors(goalPos, curPos);
         new_vel.normalize();
         new_vel.y = new_vel.x;
         new_vel.x = new_vel.z;
-        this.velocity_vec = new_vel.multiplyScalar(3);
+        this.velocity_vec = new_vel.multiplyScalar(5);
         this.moveVelocity();
 
         // update track list
         const dist = new Vector3();
         dist.subVectors(goalPos, curPos);
-        if (dist.length() < .25){
+        if (dist.length() < 1){
             this.movementArr.shift();
             return;
         }

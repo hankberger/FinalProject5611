@@ -75,6 +75,8 @@ botBtn?.addEventListener("click", (e) => {
     model.position.y = .2
     model.position.x = offset;
     offset += 2;
+    model.position.z = track.getTrackPositions()[0].z + Math.random() * 10 - 5;
+    model.position.x = track.getTrackPositions()[0].x + Math.random() * 10 - 5;
     // model.position.z = Math.random() * 100 - 50;
     // model.position.x = Math.random() * 100 - 50;
     // model.children[0].children[3].material.color.setHex(0xffaabb);
@@ -130,8 +132,8 @@ function render(){
       dist.copy(app.obstacles[i].position);
       dist.sub(AI.AIs[j].mesh.position);
       if(dist.length() < 1.25){
-        AI.AIs[j].speed *= -.8
-    }
+        // AI.AIs[j].speed *= -.8
+      }
     }
   }
 
