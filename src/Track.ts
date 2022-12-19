@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Scene from "./Scene";
 import * as THREE from 'three';
 import Player from "./Player";

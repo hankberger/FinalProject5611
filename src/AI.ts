@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Car from "./Car";
 import App from "./Scene";
 import { Vector3, Group } from "three";

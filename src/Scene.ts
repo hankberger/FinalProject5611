@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as THREE from 'three';
 import Car from "./Car";
 import Player from "./Player";
