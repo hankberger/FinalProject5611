@@ -2,10 +2,12 @@ import Player from './Player';
 import Scene from './Scene'
 
 export default class UI{
-    public score: number;
+    public static score: number;
+    public static gameStarted: boolean;
 
     constructor(){
-        this.score = 0;
+        UI.score = 0;
+        UI.gameStarted = false;
         this.buildControls();
     }
 
@@ -27,16 +29,16 @@ export default class UI{
             e.preventDefault();
             panel?.classList.remove('visible');
             panel?.classList.add('hidden');
-            
+            UI.gameStarted = true;
             console.log('yeet');
         })
     }
 
     updateScore(dt: number, player: Player){
-        this.score += player.velocity_vec.length();
+        UI.score += player.velocity_vec.length();
         const scoreDiv = document.getElementById('scorenumber');
         if(scoreDiv){
-            scoreDiv.innerText = `${~~this.score}`;
+            scoreDiv.innerText = `${~~UI.score}`;
         }
         
     }
