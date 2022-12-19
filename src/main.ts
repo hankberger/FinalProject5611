@@ -148,8 +148,14 @@ function render(){
   }
   bots.forEach((bot)=>{
     // bot.move(dt, app.inputVector);
+    bot.computeForce();
+  });
+
+  bots.forEach((bot)=>{
+    bot.updateVelocity();
     bot.moveToTrack(dt);
   });
+
 
   track.updateTrack(app.player);
 

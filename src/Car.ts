@@ -22,7 +22,7 @@ export default class Car{
         this.id = Car.numCars;
         Car.numCars += 1;
 
-        this.acceleration = 10;
+        this.acceleration = 5;
         this.velocity = 0;
         
         this.mesh = carMesh;
@@ -30,7 +30,7 @@ export default class Car{
 
         this.app = app;
 
-        this.maxSpeed = 5;
+        this.maxSpeed = 2;
     }
 
     //Virtual Function, Implement this in the base class (AI, Player). 

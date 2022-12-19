@@ -41,6 +41,59 @@ export default class AI extends Car{
         this.position = this.mesh.position;
     }
 
+    getGoalPosition(): Vector3 {
+
+        // Find new goal position
+        const goalPos = new Vector3();
+        goalPos.copy(this.movementArr[0]);
+        
+        // add a little noise to the goal position
+        goalPos.x += this.offset_x;
+        goalPos.z += this.offset_z;
+
+        return goalPos;
+    }
+
+    computeForce(): void {
+        const acc = new Vector3();
+
+        const goalPos = this.getGoalPosition();
+
+        // find new goal velocity
+        const curPos = this.mesh.position;
+        const goal_vel = new Vector3();
+        goal_vel.subVectors(goalPos, curPos);
+        goal_vel.setLength(10);
+        goal_vel.y = goal_vel.x;
+        goal_vel.x = goal_vel.z;
+        console.log(goal_vel)
+
+        const goal_force = new Vector3();
+        goal_force.subVectors(goal_vel, this.velocity_vec);
+        goal_force.setLength(10);
+        console.log(goal_force);
+
+        acc.add(goal_force);
+
+        this.acc = acc;
+    }
+
+    updateVelocity(): void {
+        const add = new Vector3();
+        add.copy(this.acc);
+        add.setLength(2);
+
+        const beta = 0.9;
+
+        const first = new Vector3();
+        first.copy(this.velocity_vec);
+        first.multiplyScalar(beta);
+
+        add.multiplyScalar(1 - beta);
+
+        this.velocity_vec.addVectors(first, add);
+    }
+
     moveToTrack(dt: number){
         const newTrack = this.track.getTrackPositions();
 
@@ -53,24 +106,12 @@ export default class AI extends Car{
             return;
         }
 
-        // set new velocity to make car move towards goal
-        const curPos = this.mesh.position;
-        const goalPos = new Vector3();
-        goalPos.copy(this.movementArr[0]);
-        
-        // add a little noise to the goal position
-        goalPos.x += this.offset_x;
-        goalPos.z += this.offset_z;
-
-        const new_vel = new Vector3();
-        new_vel.subVectors(goalPos, curPos);
-        new_vel.normalize();
-        new_vel.y = new_vel.x;
-        new_vel.x = new_vel.z;
-        this.velocity_vec = new_vel.multiplyScalar(3);
         this.moveVelocity();
 
         // update track list
+        const goalPos = this.getGoalPosition();
+        const curPos = this.mesh.position;
+
         const dist = new Vector3();
         dist.subVectors(goalPos, curPos);
         if (dist.length() < 1){
