@@ -209,7 +209,7 @@ function render(){
   // app.camera.position.z = app.player.position.z;
   // app.camera.translateZ(-10);
 
-  console.log(app.controls);
+  // console.log(app.controls);
   if(app.camera.position.y < 2.5){
     app.camera.position.y = 2.5;
   }

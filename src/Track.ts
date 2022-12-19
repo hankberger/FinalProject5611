@@ -113,17 +113,25 @@ export default class Track{
 
         if(Track.trackList.length == 5){
             if(Track.trackList[0].obstacle){
+                
                 this.app.scene.remove(Track.trackList[0].obstacle);
                 this.app.obstacles.shift();
             }
             
             this.app.scene.remove(Track.trackList[0].mesh);
+
+            if(Track.trackList[0].hasCoin){
+                this.app.scene.remove(this.coins[0]);
+                this.coins.shift();
+            }
+            
             
             Track.trackList.shift();
         }
 
         //Generate a cone
-        const loader = new FBXLoader();
+        if(Track.trackList.length > 3){
+            const loader = new FBXLoader();
         loader.load('assets/cone2.fbx', (obj) => {
             obj.traverse(function(child){
                 child.castShadow = true;
@@ -136,9 +144,12 @@ export default class Track{
             this.currentTrack.obstacle = obj;
         })
 
+        }
+        
         let random = Math.random() * 100;
 
         if(random <= 50){
+            this.currentTrack.hasCoin = true;
             const geometry = new THREE.CylinderGeometry( .5, .5, .1, 20 );
             const material = new THREE.MeshPhongMaterial( {color: 0xffff00} );
             const cylinder = new THREE.Mesh( geometry, material );
@@ -246,10 +257,12 @@ class trackPiece{
     public type: string;
     public mesh: THREE.Mesh;
     public obstacle: THREE.Group | null;
+    public hasCoin: boolean;
     constructor(type: string, floor: THREE.Mesh){
         this.type = type;
         this.mesh = floor;
         this.obstacle = null;
+        this.hasCoin = false;
         // this.obstacle = new THREE.Group();
     }
 }
