@@ -12,9 +12,12 @@ export default class Track{
     public coordinates: THREE.Vector3;
     public trackSize: number;
     public cone: Object3D;
-    public loader: FBXLoader;
 
     public static trackList: trackPiece[];
+
+    public straightTexture;
+    public rightTexture;
+    public leftTexture;
 
     constructor(app: Scene){
         this.app = app;
@@ -28,8 +31,11 @@ export default class Track{
             this.generateTrack();
         }
 
-      
         // this.app.scene.add(this.cone);
+        // const texLoader = new THREE.TextureLoader;
+        // this.straightTexture = texLoader.load('textures/track_straight.png');
+        // this.leftTexture = new THREE.TextureLoader().load('textures/track_lturn.png');
+        // this.rightTexture = new THREE.TextureLoader().load('textures/track_rturn.png');
         
     }
 
@@ -42,13 +48,32 @@ export default class Track{
         let texture;
         let dir = "";
         if(randomNum < 6){
-            texture = new THREE.TextureLoader().load( 'textures/track_straight.png' );
+            if(!this.straightTexture){
+                const loader = new THREE.TextureLoader;
+                this.straightTexture = loader.load('textures/fixedhopefully.png')
+                texture = this.straightTexture;
+            } else {
+                texture = this.straightTexture;
+            }
             dir = "straight";
         } else if(randomNum >= 6 && randomNum < 8){
-            texture = new THREE.TextureLoader().load( 'textures/track_lturn.png' );
+            if(!this.leftTexture){
+                const loader = new THREE.TextureLoader;
+                this.leftTexture = loader.load('textures/lturnActually.png')
+                texture = this.leftTexture;
+            } else {
+                texture = this.leftTexture;
+            }
             dir = "left";
         } else if(randomNum >= 8){
-            texture = new THREE.TextureLoader().load( 'textures/track_rturn.png' );
+            // if(!this.leftTexture){
+            //     const loader = new THREE.TextureLoader;
+            //     this.rightTexture = loader.load('textures/rturn.png')
+            //     texture = this.rightTexture;
+            // } else {
+            //     texture = this.rightTexture;
+            // }
+            texture = new THREE.TextureLoader().load('textures/rturn.png');
             dir = "right";
         }
         
@@ -86,6 +111,7 @@ export default class Track{
         if(Track.trackList.length == 5){
             if(Track.trackList[0].obstacle){
                 this.app.scene.remove(Track.trackList[0].obstacle);
+                this.app.obstacles.shift();
             }
             
             this.app.scene.remove(Track.trackList[0].mesh);
@@ -94,13 +120,13 @@ export default class Track{
         }
 
         //Generate a cone
-        this.loader = new FBXLoader();
-        this.loader.load('assets/cone2.fbx', (obj) => {
+        const loader = new FBXLoader();
+        loader.load('assets/cone2.fbx', (obj) => {
             obj.traverse(function(child){
                 child.castShadow = true;
             })
-            obj.position.x = this.currentTrack.mesh.position.x + (Math.random() * 15) - 7;
-            obj.position.z = this.currentTrack.mesh.position.z + (Math.random() * 15) - 7;
+            obj.position.x = this.currentTrack.mesh.position.x + (Math.random() * 14) - 7;
+            obj.position.z = this.currentTrack.mesh.position.z + (Math.random() * 14) - 7;
             obj.position.y = .1;
             this.app.scene.add(obj);
             this.app.obstacles.push(obj);
