@@ -155,6 +155,7 @@ export default class Track{
         }
 
         for(let i in AI.AIs){
+            if (AI.AIs[i].reversed) continue;
             const botDist = new THREE.Vector3();
             botDist.copy(this.currentTrack.mesh.position);
             botDist.sub(AI.AIs[i].mesh.position);

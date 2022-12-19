@@ -15,8 +15,10 @@ export default class AI extends Car{
     public player: Player;
     public offset_x: number;
     public offset_z: number;
+    public reversed: boolean;
+    public lastGoal: Vector3;
 
-    constructor(carMesh: Group, app: App, track: Track, player: Player){
+    constructor(carMesh: Group, app: App, track: Track, player: Player, reversed: boolean){
         super(carMesh, app);
         AI.numAI += 1;
 
@@ -25,11 +27,15 @@ export default class AI extends Car{
         this.last_ang = 0;
         AI.AIs.push(this);
         this.track = track;
-        this.movementArr = track.getTrackPositions();
         this.speed = .45;
         this.player = player;
         this.offset_x = Math.random() * 10 - 5;
         this.offset_z = Math.random() * 10 - 5;
+        this.movementArr = [...track.getTrackPositions()];
+        this.reversed = reversed;
+        if (reversed) {
+            this.movementArr.reverse();
+        }
     }
 
     //I copied this function from the Player class. Right now it just moves the bot using the same controls as the player.
@@ -42,6 +48,7 @@ export default class AI extends Car{
     }
 
     getGoalPosition(): Vector3 {
+        if (this.movementArr.length === 0) return this.lastGoal;
 
         // Find new goal position
         const goalPos = new Vector3();
@@ -51,6 +58,7 @@ export default class AI extends Car{
         goalPos.x += this.offset_x;
         goalPos.z += this.offset_z;
 
+        this.lastGoal = goalPos;
         return goalPos;
     }
 
@@ -168,7 +176,7 @@ export default class AI extends Car{
             console.log("ai player separation force");
             const sepForce = new Vector3();
             sepForce.copy(dist);
-            sepForce.setLength(sepScale / dist.length());
+            sepForce.setLength(sepScale * 4 / dist.length());
             acc.add(sepForce);
         }
 
@@ -263,11 +271,13 @@ export default class AI extends Car{
     }
 
     moveToTrack(dt: number){
-        const newTrack = this.track.getTrackPositions();
 
-        // handle adding a new track
-        if (this.movementArr.length != newTrack.length) {
-            this.movementArr.push(newTrack[newTrack.length - 1]);
+        if (!this.reversed) {
+            const newTrack = this.track.getTrackPositions();
+            // handle adding a new track
+            if (this.movementArr.length != newTrack.length) {
+                this.movementArr.push(newTrack[newTrack.length - 1]);
+            }
         }
 
         if (this.movementArr.length == 0) {

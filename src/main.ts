@@ -77,8 +77,20 @@ botBtn?.addEventListener("click", (e) => {
     model.position.y = .2
     model.position.x = offset;
     offset += 2;
-    model.position.z = track.getTrackPositions()[0].z + Math.random() * 10 - 5;
-    model.position.x = track.getTrackPositions()[0].x + Math.random() * 10 - 5;
+
+
+    const positions = track.getTrackPositions();
+
+    const reversed = Math.random() > 0.5;
+    // const reversed = true;
+    let index = 0;
+    if (reversed) {
+      index = positions.length - 1;
+    }
+
+    model.position.z = positions[index].z + Math.random() * 10 - 5;
+    model.position.x = positions[index].x + Math.random() * 10 - 5;
+
     // model.position.z = Math.random() * 100 - 50;
     // model.position.x = Math.random() * 100 - 50;
     // model.children[0].children[3].material.color.setHex(0xffaabb);
@@ -96,7 +108,7 @@ botBtn?.addEventListener("click", (e) => {
     model.children[0].children[4].material.color.setHex(color);
     model.children[0].children[5].material.color.setHex(color);
     // console.log(model);
-    const aibot = new AI(model, app, track, app.player);
+    const aibot = new AI(model, app, track, app.player, reversed);
     bots.push(aibot);
     app.scene.add(model);
   });
@@ -136,10 +148,10 @@ function render(){
     const dist = new THREE.Vector3();
     dist.copy(ai.position);
     dist.sub(app.player.position);
-    if (dist.length() > 1.25) {
+    if (dist.length() > 2) {
       continue;
     }
-    console.log("colision");
+    console.log("player-ai collision");
 
     app.player.speed = -4;
   }
