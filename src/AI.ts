@@ -138,6 +138,7 @@ export default class AI extends Car{
             acc.add(sepForce);
         }
 
+        // obstacle separation
         for (const obs of this.app.obstacles) {
             const dist = new Vector3();
             const obs_pos = this.xz_to_xy(obs.position);
@@ -153,6 +154,21 @@ export default class AI extends Car{
             const sepForce = new Vector3();
             sepForce.copy(dist);
             sepForce.setLength(obstacleSepScale / dist.length());
+            acc.add(sepForce);
+        }
+
+        // player separation
+        const dist = new Vector3();
+        const player_pos = this.xz_to_xy(this.app.player.position);
+        const this_pos = this.xz_to_xy(this.position);
+        dist.copy(this_pos);
+        dist.sub(player_pos);
+
+        if (dist.length() < sepForce_maxD) {
+            console.log("ai player separation force");
+            const sepForce = new Vector3();
+            sepForce.copy(dist);
+            sepForce.setLength(sepScale / dist.length());
             acc.add(sepForce);
         }
 
