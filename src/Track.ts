@@ -13,6 +13,7 @@ export default class Track{
     public coordinates: THREE.Vector3;
     public trackSize: number;
     public cone: Object3D;
+    public coins: Mesh[];
 
     public static trackList: trackPiece[];
 
@@ -27,6 +28,7 @@ export default class Track{
         this.coordinates = new THREE.Vector3();
         this.trackSize = 20;
         this.cone = new Object3D();
+        this.coins = [];
         Track.trackList = [];
         for(let i = 0; i < 4; i++){
             this.generateTrack();
@@ -133,6 +135,22 @@ export default class Track{
             this.app.obstacles.push(obj);
             this.currentTrack.obstacle = obj;
         })
+
+        let random = Math.random() * 100;
+
+        if(random <= 50){
+            const geometry = new THREE.CylinderGeometry( .5, .5, .1, 20 );
+            const material = new THREE.MeshPhongMaterial( {color: 0xffff00} );
+            const cylinder = new THREE.Mesh( geometry, material );
+            cylinder.rotation.x = Math.PI/2;
+            cylinder.position.x = this.currentTrack.mesh.position.x + (Math.random() * 14) - 7;
+            cylinder.position.z = this.currentTrack.mesh.position.z + (Math.random() * 14) - 7;
+            cylinder.position.y = .8;
+            cylinder.castShadow = true;
+            cylinder.receiveShadow= true;
+            this.coins.push(cylinder);
+            this.app.scene.add(cylinder);
+        }
         
     }
 

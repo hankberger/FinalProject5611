@@ -128,6 +128,7 @@ export function getObstacles(){
 
 //RENDER LOOP!
 const v = new THREE.Vector3()
+let totalRuntime = 0;
 function render(){
   const dt = app.clock.getDelta();
   requestAnimationFrame( render );
@@ -175,6 +176,19 @@ function render(){
     bot.moveToTrack(dt);
   });
 
+  track.coins.forEach((coin) =>{
+    coin.rotateZ(dt);
+    coin.position.y = .7 * Math.abs((Math.sin(totalRuntime))) + .7;
+
+    const dist = new THREE.Vector3();
+    dist.copy(coin.position);
+    dist.sub(app.player.position);
+    if(dist.length() < 1.4){
+        app.scene.remove(coin);
+        UI.score += 1000;
+    }
+  })
+
 
   track.updateTrack(app.player);
 
@@ -188,14 +202,23 @@ function render(){
   
   const carRotation = app.player.mesh.rotation.y;
 
-  const camPosition = new THREE.Vector3(app.player.mesh.position.x , 3, app.player.mesh.position.z );
+  // const camPosition = new THREE.Vector3(app.player.mesh.position.x , 3, app.player.mesh.position.z );
 
-  if(app.player.velocity_vec.length() > .25){
-    app.camera.position.lerpVectors(app.camera.position, camPosition, 0.035)
+  // app.camera.position.x = app.player.position.x;
+  // app.camera.position.y = 2;
+  // app.camera.position.z = app.player.position.z;
+  // app.camera.translateZ(-10);
+
+  console.log(app.controls);
+  if(app.camera.position.y < 2.5){
+    app.camera.position.y = 2.5;
   }
+  // if(app.player.velocity_vec.length() > .25){
+  //   app.camera.position.lerpVectors(app.camera.position, camPosition, 0.035)
+  // }
 
   ui.updateScore(dt, app.player);
-  
+  totalRuntime += dt;
   app.renderer.render(app.scene, app.camera);
 };
 

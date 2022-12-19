@@ -31,7 +31,7 @@ export default class Scene{
         this.setupScene();
         this.setupCamera();
         this.setupRenderer();
-        // this.setupControls();
+        this.setupControls();
         this.setupObjects();
         this.setupLights();
 
@@ -89,8 +89,8 @@ export default class Scene{
     setupControls(){
         // CONTROLS
         this.controls.enableDamping = true;
-        this.controls.minDistance = 2;
-        this.controls.maxDistance = 5;
+        this.controls.minDistance = 6;
+        this.controls.maxDistance = 8;
         this.controls.enablePan = false
         this.controls.maxPolarAngle = Math.PI / 2 - 0.05
         this.controls.update();
