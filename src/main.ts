@@ -148,7 +148,7 @@ function render(){
   }
   bots.forEach((bot)=>{
     // bot.move(dt, app.inputVector);
-    bot.computeForce();
+    bot.computeForce(app.player);
   });
 
   bots.forEach((bot)=>{

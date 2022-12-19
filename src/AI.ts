@@ -54,7 +54,15 @@ export default class AI extends Car{
         return goalPos;
     }
 
-    computeForce(): void {
+    xz_to_xy(xz: Vector3): Vector3 {
+        const xy = new Vector3();
+        xy.y = xz.x;
+        xy.x = xz.z;
+        return xy;
+    }
+
+
+    computeForce(player: Player): void {
         const acc = new Vector3();
 
         const goalPos = this.getGoalPosition();
@@ -66,17 +74,88 @@ export default class AI extends Car{
         goal_vel.setLength(10);
         goal_vel.y = goal_vel.x;
         goal_vel.x = goal_vel.z;
-        console.log(goal_vel)
 
         const goal_force = new Vector3();
         goal_force.subVectors(goal_vel, this.velocity_vec);
         goal_force.setLength(10);
-        console.log(goal_force);
 
         acc.add(goal_force);
 
+        // avoidance force with player
+        const pos1 = this.xz_to_xy(this.position);
+        const pos2 = this.xz_to_xy(player.position);
+
+        const t = this.ttc(pos1, this.velocity_vec, pos2, player.velocity_vec);
+        console.log(t);
+
+        if (t > 0) {
+            //A_future = A_current + A_vel*ttc; B_future + B_current + B_vel*ttc;
+            const a_dist = new Vector3();
+            a_dist.copy(this.velocity_vec);
+            a_dist.multiplyScalar(t);
+
+            const af = new Vector3();
+            af.addVectors(pos1, a_dist);
+
+            const b_dist = new Vector3();
+            b_dist.copy(player.velocity_vec);
+            b_dist.multiplyScalar(t);
+
+            const bf = new Vector3();
+            
+            bf.addVectors(pos2, b_dist);
+
+            const rel = new Vector3();
+            rel.subVectors(af, bf);
+            const k_avoid = 100;
+            rel.setLength(k_avoid * (1 / t));
+
+            acc.add(rel);
+        }
+
         this.acc = acc;
     }
+
+    ttc(pos1: Vector3, vel1: Vector3, pos2: Vector3, vel2: Vector3): number {
+        const dist = new Vector3();
+        dist.subVectors(pos2, pos1)
+        if (dist.length() <= 1) {
+            return 0;
+        }
+        const rel_vel = new Vector3()
+        rel_vel.subVectors(vel2, vel1);
+
+        const time = this.rayCircleIntersectTime(pos1, 5, pos2, rel_vel);
+
+        return time;
+    }
+
+    rayCircleIntersectTime(center: Vector3, r: number, l_start: Vector3, l_dir: Vector3) {
+ 
+        //Compute displacement vector pointing from the start of the line segment to the center of the circle
+        const toCircle = new Vector3();
+        toCircle.subVectors(center, l_start);
+       
+        //Solve quadratic equation for intersection point (in terms of l_dir and toCircle)
+        const a = l_dir.length();
+
+        // const b = -2*dot(l_dir,toCircle); //-2*dot(l_dir,toCircle)
+        const b = l_dir.dot(toCircle) * -2;
+
+        const c = toCircle.lengthSq() - (r*r); //different of squared distances
+
+        const d = b*b - 4*a*c; //discriminant
+       
+        if (d >=0 ){
+          //If d is positive we know the line is colliding
+          const t = (-b - Math.sqrt(d))/(2*a); //Optimization: we typically only need the first collision!
+          if (t >= 0) return t;
+          return -1;
+        }
+       
+        return -1; //We are not colliding, so there is no good t to return
+      }
+
 
     updateVelocity(): void {
         const add = new Vector3();
