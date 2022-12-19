@@ -146,67 +146,6 @@ function render(){
       app.controls.update();
       app.player.move(dt, app.inputVector);
   }
-
-  // ------------------------------START BOIDS------------------------------
-  // const sepForce_maxD = 10;
-  // const attraction_maxD = 10;
-  // const alignment_maxD = 10;
-  // const sepScale = 1;
-  // const attractionScale = 1;
-  // const alignScale = 1;
-
-  // for (const ai of AI.AIs) {
-  //   const acc = new Vector3();
-
-  //   // separation
-  //   for (const other of AI.AIs) {
-  //     const dist = ai.position.distanceTo(other.position);
-  //     if (dist < 0.01 || dist > sepForce_maxD) continue;
-  //     const sepForce = new Vector3();
-  //     sepForce.subVectors(ai.position, other.position);
-  //     sepForce.setLength(sepScale / Math.pow(dist, 2));
-  //     acc.add(sepForce);
-  //   }
-
-  //   // cohesion
-  //   let num_neigh = 0
-  //   const avg_pos = new Vector3();
-  //   for (const other of AI.AIs) {
-  //     const dist = ai.position.distanceTo(other.position);
-  //     if (dist > attraction_maxD) continue;
-  //     avg_pos.add(other.position);
-  //     num_neigh++;
-  //   }
-  //   avg_pos.divideScalar(num_neigh);
-  //   const attractionForce = new Vector3();
-  //   attractionForce.subVectors(avg_pos, ai.position);
-  //   attractionForce.setLength(attractionScale);
-  //   acc.add(attractionForce);
-
-  //   // alignment
-  //   num_neigh = 0;
-  //   const avg_vel = new Vector3();
-  //   for (const other of AI.AIs) {
-  //     const dist = ai.position.distanceTo(other.position);
-  //     if (dist > alignment_maxD) continue;
-  //     avg_vel.add(other.velocity_vec);
-  //     num_neigh++;
-  //   }
-  //   avg_vel.divideScalar(num_neigh);
-  //   const towards = new Vector3();
-  //   towards.subVectors(avg_vel, ai.velocity_vec);
-  //   towards.setLength(alignScale)
-  //   acc.add(towards);
-
-  //   ai.acc = acc;
-  // }
-
-  // // apply acceleration to each bot
-  // AI.AIs.forEach((ai) => {
-  //   ai.applyAcc();
-  // })
-  // ------------------------------END BOIDS------------------------------
-
   bots.forEach((bot)=>{
     // bot.move(dt, app.inputVector);
     bot.moveToTrack(dt);
@@ -223,12 +162,6 @@ function render(){
   }
   
   const carRotation = app.player.mesh.rotation.y;
-  // console.log(carRotation);
-
-  // const arcCos = Math.cos(carRotation);
-  // const arcSin = Math.sin(carRotation);
-
-  // console.log(arcCos, arcSin)
 
   const camPosition = new THREE.Vector3(app.player.mesh.position.x , 3, app.player.mesh.position.z );
 

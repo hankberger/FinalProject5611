@@ -67,7 +67,7 @@ export default class AI extends Car{
         new_vel.normalize();
         new_vel.y = new_vel.x;
         new_vel.x = new_vel.z;
-        this.velocity_vec = new_vel.multiplyScalar(5);
+        this.velocity_vec = new_vel.multiplyScalar(3);
         this.moveVelocity();
 
         // update track list
@@ -80,50 +80,5 @@ export default class AI extends Car{
 
 
         return;
-
-        // this.speed = .1 + (this.player.velocity * Math.random()) ;
-        // let curPos = this.mesh.position;
-        // let goalPos = this.movementArr[0];
-
-        // let dir = new Vector3();
-        // dir.subVectors(goalPos, curPos);
-
-        //  let goalRotation = Math.atan2(dir.x, dir.z);
-        // if(Math.abs((this.mesh.rotation.y) - goalRotation) < .15){
-        //     //Do nothing
-        // } else if(this.mesh.rotation.y < (this.mesh.rotation.y + goalRotation) / 2){
-        //     this.mesh.rotation.y += .1;
-        // } else {
-        //     this.mesh.rotation.y -= .1;
-        // }
-
-        // if(dir.length() < .25){
-        //     this.movementArr.shift();
-        //     return;
-        // }
-
-        // if(!((this.speed * dt) > dir.length())){
-        //     dir.normalize();
-        // } else {
-        //     this.mesh.position.x = this.movementArr[0].x;
-        //     this.mesh.position.z = this.movementArr[0].z;
-        // }
-
-        // const vel = dir.multiplyScalar(this.speed);
-        // this.mesh.position.add(new Vector3(vel.x, 0, vel.z));
-        // return;
-    }
-
-    applyAcc(): void {
-        this.velocity_vec.add(this.acc);
-        this.velocity_vec.setLength(10);
-
-        // boundary condition
-        if (this.position.x > 100 || this.position.x < -100) {
-            this.velocity_vec.y = -this.velocity_vec.y;
-        }
-        if (this.position.z > 100 || this.position.z < -100) {
-            this.velocity_vec.x = -this.velocity_vec.x;
-        }
     }
 }
