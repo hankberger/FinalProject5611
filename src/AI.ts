@@ -117,17 +117,42 @@ export default class AI extends Car{
         const attraction_maxD = 20;
         const alignment_maxD = 20;
         const sepScale = 5;
+        const obstacleSepScale = 10;
         const attractionScale = 5;
         const alignScale = 5;
 
         // separation
         for (const other of AI.AIs) {
-            const dist = this.position.distanceTo(other.position);
-            if (dist < 0.01 || dist > sepForce_maxD) continue;
-            console.log("ai separation force")
+            const dist = new Vector3();
+
+            const other_pos = this.xz_to_xy(other.position);
+            const this_pos = this.xz_to_xy(this.position);
+            dist.copy(this_pos);
+            dist.sub(other_pos);
+
+            if (dist.length() < 0.01 || dist.length() > sepForce_maxD) continue;
+
             const sepForce = new Vector3();
-            sepForce.subVectors(this.position, other.position);
-            sepForce.setLength(sepScale / Math.pow(dist, 2));
+            sepForce.copy(dist);
+            sepForce.setLength(sepScale / Math.pow(dist.length(), 2));
+            acc.add(sepForce);
+        }
+
+        for (const obs of this.app.obstacles) {
+            const dist = new Vector3();
+            const obs_pos = this.xz_to_xy(obs.position);
+            const this_pos = this.xz_to_xy(this.position);
+            dist.copy(this_pos);
+            dist.sub(obs_pos);
+
+            if (dist.length() > 10) {
+                continue;
+            }
+
+            console.log("ai obstacle separation force");
+            const sepForce = new Vector3();
+            sepForce.copy(dist);
+            sepForce.setLength(obstacleSepScale / dist.length());
             acc.add(sepForce);
         }
 
