@@ -1,9 +1,10 @@
 import Scene from "./Scene";
 import * as THREE from 'three';
 import Player from "./Player";
-import { Loader, Mesh, Object3D } from "three";
+import { Loader, Mesh, Object3D, Vector3 } from "three";
 import AI from "./AI";
 import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader';
+import UI from "./UI";
 
 export default class Track{
     public app: Scene;
@@ -161,6 +162,40 @@ export default class Track{
             if(botDist.length() < this.trackSize - 3){
                 this.generateTrack();
             }
+        }
+        
+        let onatrack = false;
+        for(let i in Track.trackList){
+            const dist = new THREE.Vector3();
+            dist.copy(Track.trackList[i].mesh.position);
+            dist.sub(car.mesh.position);
+            if(dist.length() <= 12){
+                onatrack = true;
+            }
+        }
+
+        if(!onatrack && UI.gameStarted){
+            const gameOver = document.getElementById("gameOver");
+            gameOver?.classList.remove('hiddenNoTransition');
+            gameOver?.classList.add('visible');
+
+            const gameOverScore = document.getElementById("gameOverScore");
+            const finalScore = UI.score;
+            if(gameOverScore){
+                gameOverScore.innerText = `${~~finalScore}`;
+            }
+
+            this.app.player.acceleration = 0;
+            this.app.player.velocity = 0;
+            this.app.inputVector = new Vector3(0,0,0);
+
+            const restartButton = document.getElementById("playAgain");
+            restartButton?.addEventListener('click', (e)=>{
+                e.preventDefault();
+                location.reload();
+            })
+            
+            // alert("off track!")
         }
     //     if(this.currentTrack.type == "straight"){
     //         if(car.mesh.position.z > this.currentTrack.position.z - 2){

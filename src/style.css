@@ -123,6 +123,11 @@ html, body{
   transition: visibility 0s .7s, opacity .7s linear;
 }
 
+.hiddenNoTransition{
+  visibility: hidden;
+  opacity: 0;
+}
+
 .score{
   display: flex;
   align-items: center;
@@ -135,8 +140,8 @@ html, body{
   left: 5px;
   color: rgba(175, 2, 2, 0.7);
   font-family: pedestria-mvb,sans-serif;
-font-weight: 700;
-font-style: normal;
+  font-weight: 700;
+  font-style: normal;
   font-size: 1.5em;
 }
 
@@ -144,6 +149,46 @@ font-style: normal;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.gameOver{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 10px;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top:20%;
+  height: 450px;
+  width: 700px;
+  background-color: rgba(255, 255, 255, .9);
+  font-family: pedestria-mvb,sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 4em;
+  color: rgba(175, 2, 2, 1);
+}
+
+.gameOver > h2{
+  color: rgba(175, 2, 2, 0.7);
+}
+
+#playAgain{
+  height: 50px;
+  width: 200px;
+  border-radius: 5px;
+  color: rgb(255, 255, 255);
+  background-color: rgb(94, 118, 255);
+  border: 2px solid rgb(255, 255, 255);
+  cursor: pointer;
+  font-family: pedestria-mvb,sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: .5em;
 }
 
 @keyframes fadeOut {
